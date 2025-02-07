@@ -36,7 +36,7 @@ In addition, components must be simple. They encapsulate any needed complexity, 
 See, for example: [Test SQL Agent](./test_select_ai_sql_agent.ipynb)
 
 ## Configurations
-All the settings needed, that can be exposed (not private) are managed in a toml file (config.toml). 
+All the settings needed, that can be exposed (not private) are managed in a [toml](./config.toml) file. 
 In the example provided you find all the configuration needed, for all components and examples.
 
 Obviously:
