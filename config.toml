@@ -1,2 +1,12 @@
+[general]
+verbose = false
+
 [oci_rag_agent]
 rag_endpoint = "https://agent-runtime.generativeai.us-chicago-1.oci.oraclecloud.com"
+
+[sql_agent]
+sql_agent_type = "select_ai"
+profile_name = "OCI_GENAI_LLAMA31"
+
+# if we want sql text returned to client
+return_sql = true
