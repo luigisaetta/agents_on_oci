@@ -1,0 +1,2 @@
+[oci_rag_agent]
+rag_endpoint = "https://agent-runtime.generativeai.us-chicago-1.oci.oraclecloud.com"
