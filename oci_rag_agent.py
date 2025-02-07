@@ -1,5 +1,29 @@
 """
-This module wraps the code to call the OCI AI Agent
+File name: oci_rag_agent.py
+Author: Luigi Saetta
+Date last modified: 2025-02-07
+Python Version: 3.11
+
+Description:
+    This file provide a class with a client for OCI RAG agent
+
+Inspired by:
+
+
+Usage:
+    Import this module into other scripts to use its functions.
+    Example:
+
+
+License:
+    This code is released under the MIT License.
+
+Notes:
+    This is a part of a set of demos showing how to build a Agents and
+    multi-agents solutions based on OCI GenAI
+
+Warnings:
+    This module is in development, may change in future versions.
 """
 
 import oci
