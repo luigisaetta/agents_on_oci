@@ -33,4 +33,11 @@ All the examples are designed in a way that enables you to run on your laptop (i
 
 Everything can be easily changed to use Instance Principals or Resource Principals, but.. it is up to you. Here, we concentrate on AI.
 
+## Useful references
+Well, it is not a best practice to redo again what was already done by someone else, so here I'll point to useful and good documentation.
+
+[RAG Agent] If you need a reference to setup the **OCI AI RAG Agents**, based on 23 AI, [here](https://snicholspa.github.io/tips_tricks_howtos/oci_genai_service/genai_agents_vector_kb/#Task1:CreateOCIPoliciestoAccessOCIGenAIAgents) you can find a good one.
+
+
+
 
