@@ -4,10 +4,15 @@ Test oci_rag_agent
 
 import json
 from oci_rag_agent import OCIRAGAgent
-from config_ui import ENDPOINT
+
+from config_reader import ConfigReader
 from config_private import AGENT_ID
 
 SHOULD_STREAM = False
+
+config_reader = ConfigReader("config.toml")
+
+ENDPOINT = config_reader.find_key("rag_endpoint")
 
 
 def print_response(_response):
@@ -31,7 +36,7 @@ sess_id = rag_client.create_session()
 questions = [
     "Make a detailed and complete list of known side effects of tachipirin",
     "Can it be used on children?",
-    "Puoi fare una lista degli effetti collaterali, in italiano?"
+    "Puoi fare una lista degli effetti collaterali, in italiano?",
 ]
 
 for question in questions:

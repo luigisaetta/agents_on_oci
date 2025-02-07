@@ -17,6 +17,9 @@ Then, I thought, **why not sharing these things**?
 * OCI AI **RAG Agent** client
 * **SQL Agent** (based on SelectAI) client
 
+## Examples
+[Test OCI AI RAG Agent](./test_oci_rag_agent.py)
+
 ## Configurations
 All the settings needed, that can be exposed (not private) are managed in a toml file (config.toml). In the example provided you find all the configuration needed, for all components and examples.
 
