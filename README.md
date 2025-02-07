@@ -12,7 +12,8 @@ assemble these prototypes or any other requested demo.
 
 Then, I thought, **why not sharing these things**?
 
-## List of basc building blocks
+## List of basic building blocks
+* A reader for the TOML config
 * A **Router** (based on Cohere Command-r-plus)
 * OCI AI **RAG Agent** client
 * **SQL Agent** (based on SelectAI) client
