@@ -3,8 +3,8 @@ This repo will contain a set of **building blocks** and **examples**
 to build **Agentic AI** using Python, **OCI** and Open Source
 
 ## Motivation
-As part of my job, I often have to design and develop prototypes, to show to our partners
-and customers how to use Oracle Cloud (OCI) and OCI Generative AI Service and Agents to build
+I often have to design and develop prototypes, to show to our partners
+and customers how to use OCI Generative AI Service and OCI AI Agents to build
 solutions for their requirements.
 
 I decided then to curate a list of basic building blocks and examples, to be able to more rapidly
