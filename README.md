@@ -26,11 +26,14 @@ Then, I thought, **why not sharing these things**?
 Well, even if you're doing wonderful AI, it doesn't mean that you should forget that to be reusable, you should
 provide good Python code, well formatted and checked.
 
-These are my mandatory best practices:
+These are **my mandatory** best practices:
 * use **black** to check and fix formatting
 * use **pylint**
 
 These tools are run on the entire codebase, before any commit.
+
+In addition, components must be simple. They encapsulate any needed complexity, but to use them you need a few lines of code.
+See, for example: [Test SQL Agent](./test_select_ai_sql_agent.ipynb)
 
 ## Configurations
 All the settings needed, that can be exposed (not private) are managed in a toml file (config.toml). 
