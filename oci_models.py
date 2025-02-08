@@ -12,6 +12,9 @@ config_reader = ConfigReader("config.toml")
 ROUTER_MODEL_ID = config_reader.find_key("router_model_id")
 ROUTER_ENDPOINT = config_reader.find_key("router_model_endpoint")
 
+CUSTOM_RAG_MODEL_ID = config_reader.find_key("custom_rag_model_id")
+CUSTOM_RAG_ENDPOINT = config_reader.find_key("custom_rag_model_endpoint")
+
 
 def create_model_for_routing():
     """
@@ -24,5 +27,18 @@ def create_model_for_routing():
         # for the router we need deterministic output (temp=0)
         # and we don't need many tokens for output (max_tokens=512)
         model_kwargs={"temperature": 0, "max_tokens": 512},
+    )
+    return llm
+
+
+def create_model_for_custom_rag():
+    """
+    Create the OCI Model for custom rag
+    """
+    llm = ChatOCIGenAI(
+        model_id=CUSTOM_RAG_MODEL_ID,
+        compartment_id=COMPARTMENT_OCID,
+        service_endpoint=CUSTOM_RAG_ENDPOINT,
+        model_kwargs={"temperature": 0.1, "max_tokens": 1024},
     )
     return llm

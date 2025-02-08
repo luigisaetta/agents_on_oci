@@ -11,18 +11,9 @@ import oracledb
 
 from sql_agent import SQLAgent
 from config_reader import ConfigReader
-from config_private import DB_USER, DB_PWD, DSN, WALLET_DIR, WALLET_PWD
+from config_private import CONNECT_ARGS
 from utils import get_console_logger
 
-# create the struct from params in config_private
-CONNECT_ARGS = {
-    "user": DB_USER,
-    "password": DB_PWD,
-    "dsn": DSN,
-    "config_dir": WALLET_DIR,
-    "wallet_location": WALLET_DIR,
-    "wallet_password": WALLET_PWD,
-}
 
 logger = get_console_logger()
 
@@ -46,7 +37,6 @@ class SelectAISQLAgent(SQLAgent):
 
         return conn
 
-    # @TRACER.start_as_current_span("generate_sql")
     def generate_sql(self, nl_request: str) -> str:
         """
         Generate SQL using Select AI

@@ -6,7 +6,7 @@ from typing_extensions import TypedDict
 from langchain_core.messages import HumanMessage
 
 from oci_models import create_model_for_routing
-from prompts_library import PROMPT_ROUTER
+from prompts_library import PROMPT_ROUTER_TEMPLATE
 from utils import get_console_logger
 
 #
@@ -14,6 +14,14 @@ from utils import get_console_logger
 # needs to be adapted to the actual output
 #
 # TODO: can be generalized passing the list of outcomes
+STEP_OPTIONS = [
+    "generate_sql",
+    "analyze_data",
+    "not_allowed",
+    "answer_directly",
+    "not_defined",
+]
+
 json_route = {
     "title": "Route",
     "description": "Defines the output of the routing logic",
@@ -22,13 +30,7 @@ json_route = {
         "step": {
             "description": "The next step in the routing process",
             "type": "string",
-            "enum": [
-                "generate_sql",
-                "not_allowed",
-                "analyze_data",
-                "answer_directly",
-                "not_defined",
-            ],
+            "enum": STEP_OPTIONS,
         }
     },
     "required": ["step"],
@@ -69,6 +71,10 @@ class Router:
         self.logger.info("Called router...")
 
         # Run the augmented LLM with structured output to serve as routing logic
+        PROMPT_ROUTER = PROMPT_ROUTER_TEMPLATE.format(
+            categories=", ".join(STEP_OPTIONS)
+        )
+
         decision = self.router.invoke(
             [
                 HumanMessage(content=PROMPT_ROUTER + state["input"]),
@@ -78,3 +84,9 @@ class Router:
         self.logger.info("Decision: %s", decision)
 
         return {"decision": decision["step"]}
+
+    def get_routing_options(self):
+        """
+        return the list of routing options
+        """
+        return STEP_OPTIONS
