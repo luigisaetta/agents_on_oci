@@ -13,10 +13,11 @@ assemble these prototypes or any other requested demo.
 Then, I thought, **why not sharing these things**?
 
 ## List of basic building blocks
-* A reader for the TOML config
+* A reader for the configuration settings (TOML format)
 * A **Router** (based on Cohere Command-r-plus)
 * OCI AI **RAG Agent** client
 * **SQL Agent** (based on SelectAI) client
+* A **custom RAG agent**, based on Langchain, OCI and 23AI
 
 ## Examples
 * [Test OCI AI RAG Agent](./test_oci_rag_agent.py)
@@ -32,11 +33,12 @@ These are **my mandatory** best practices:
 
 These tools are run on the entire codebase, before any commit.
 
-In addition, components must be simple. They encapsulate any needed complexity, but to use them you need a few lines of code.
+In addition, components must be simple to use. They encapsulate any needed complexity, but to use them you need a few lines of code.
 See, for example: [Test SQL Agent](./test_select_ai_sql_agent.ipynb)
 
 ## Configurations
 All the settings needed, that can be exposed (not private) are managed in a [toml](./config.toml) file. 
+
 In the example provided you find all the configuration needed, for all components and examples.
 
 Obviously:
