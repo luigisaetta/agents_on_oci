@@ -2,7 +2,9 @@
 Custom RAG agent based on Langchain and OCI GenAI
 """
 
+import uuid
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.messages import HumanMessage, AIMessage
 from langchain.chains import create_history_aware_retriever
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -48,12 +50,11 @@ class OCICustomRAGagent:
     This class provide an implementation of a custom RAG agent
     based on Langchain and OCI GenAI
 
+    it also manage the chat history for each session
     Usage:
 
     """
 
-    # TODO: add the management of the session
-    # storing, for each session, the chat history
     def __init__(self, should_stream: bool = False):
         """
         Initialize the client
@@ -64,18 +65,31 @@ class OCICustomRAGagent:
         # the name of the DB table
         self.collection_name = self.config.find_key("collection_name")
         self.should_stream = should_stream
+
+        # dict to handle all the sessions
+        self.sessions = {}
         self.logger = get_console_logger()
 
     def create_session(self):
         """
         Create a session with the agent
         """
-        return
+        # create a unique session id
+        session_id = str(uuid.uuid4())
+        # init session history
+        self.sessions[session_id] = []
+
+        self.logger.info("Session %s created.", session_id)
+
+        return session_id
 
     def chat(self, session_id: str, message: str):
         """
         Chat with the agent
         """
+        # get the chat history of the session
+        chat_history = self.sessions[session_id]
+
         # actually don't create, get a reference to the vector store
         v_store = create_vector_store(self.collection_name)
 
@@ -95,13 +109,23 @@ class OCICustomRAGagent:
         )
 
         # invoke llm
-        # TODO: add the chat history
-        ai_msg = rag_chain.invoke({"input": message, "chat_history": []})
+        chain_output = rag_chain.invoke(
+            {"input": message, "chat_history": chat_history}
+        )
 
-        return ai_msg
+        # Update chat history with HumanMessage and AIMessage
+        # be careful, since it is a chain, chain_output is not an AIMSg but a dict
+        chat_history.append(HumanMessage(content=message))
+        chat_history.append(AIMessage(content=chain_output["answer"]))
+
+        return chain_output
 
     def close_session(self, session_id: str):
         """
         Close the session cancelling the chat history
         """
-        return
+        if session_id in self.sessions:
+            del self.sessions[session_id]
+            self.logger.info("Session %s closed.", session_id)
+        else:
+            self.logger.warning("Session %s does not exist.", session_id)

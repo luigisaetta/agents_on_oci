@@ -4,13 +4,18 @@ Test custom rag agent
 
 from oci_custom_rag_agent import OCICustomRAGagent
 
-# TODO: add handling of the session
 rag_agent = OCICustomRAGagent()
 
-question = "What are the side effects of aspirin?"
+SESSION_ID = rag_agent.create_session()
 
-print(f"Question: {question}\n")
-ai_msg = rag_agent.chat(session_id="1234", message=question)
+questions = ["What are the side effects of aspirin?", "Can it be given to children?"]
 
-print(ai_msg["answer"])
-print("")
+for question in questions:
+
+    print(f"Question: {question}\n")
+    ai_msg = rag_agent.chat(session_id=SESSION_ID, message=question)
+
+    print(ai_msg["answer"])
+    print("")
+
+rag_agent.close_session(session_id=SESSION_ID)
