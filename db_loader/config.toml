@@ -1,0 +1,10 @@
+[general]
+verbose = false
+
+[chunking]
+# due to problems with tokenizer
+chunks_max_tokens = 1024
+
+[embeddings]
+embed_model_id = "cohere.embed-multilingual-v3.0"
+embed_model_endpoint = "https://inference.generativeai.eu-frankfurt-1.oci.oraclecloud.com"
