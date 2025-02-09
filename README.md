@@ -18,6 +18,7 @@ Then, I thought, **why not sharing these things**?
 * OCI AI **RAG Agent** client
 * **SQL Agent** (based on SelectAI) client
 * A **custom RAG agent**, based on Langchain, OCI and 23AI
+* Utility to load documents in DB 23AI (db_loader)
 
 ## Examples
 * [Test OCI AI RAG Agent](./test_oci_rag_agent.py)
