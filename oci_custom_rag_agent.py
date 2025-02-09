@@ -30,7 +30,7 @@ CONTEXT_Q_PROMPT = ChatPromptTemplate.from_messages(
 #
 # The prompt for the answer from the LLM
 #
-QA_SYSTEM_PROMPT = """You are an AI assistant for question-answering tasks. \
+QA_SYSTEM_PROMPT = """You are an assistant for question-answering tasks. \
 Use the following pieces of retrieved context to answer the question. \
 If you don't know the answer, just say that you don't know. \
 
@@ -83,6 +83,30 @@ class OCICustomRAGagent:
 
         return session_id
 
+    def _create_rag_chain(self):
+        """
+        Create the chain
+        """
+        # actually don't create, get a reference to the vector store
+        v_store = create_vector_store(self.collection_name)
+
+        llm = create_model_for_custom_rag()
+
+        retriever = v_store.as_retriever(search_kwargs={"k": self.top_k})
+
+        # create the RAG chain using Langchain
+        # the chain is created to handle msg history
+        history_aware_retriever = create_history_aware_retriever(
+            llm, retriever, CONTEXT_Q_PROMPT
+        )
+
+        question_answer_chain = create_stuff_documents_chain(llm, QA_PROMPT)
+
+        _rag_chain = create_retrieval_chain(
+            history_aware_retriever, question_answer_chain
+        )
+        return _rag_chain
+
     def chat(self, session_id: str, message: str):
         """
         Chat with the agent
@@ -90,23 +114,7 @@ class OCICustomRAGagent:
         # get the chat history of the session
         chat_history = self.sessions[session_id]
 
-        # actually don't create, get a reference to the vector store
-        v_store = create_vector_store(self.collection_name)
-
-        llm = create_model_for_custom_rag()
-
-        retriever = v_store.as_retriever(k=self.top_k)
-
-        # create the RAG chain using Langchain
-        history_aware_retriever = create_history_aware_retriever(
-            llm, retriever, CONTEXT_Q_PROMPT
-        )
-
-        question_answer_chain = create_stuff_documents_chain(llm, QA_PROMPT)
-
-        rag_chain = create_retrieval_chain(
-            history_aware_retriever, question_answer_chain
-        )
+        rag_chain = self._create_rag_chain()
 
         # invoke llm
         chain_output = rag_chain.invoke(

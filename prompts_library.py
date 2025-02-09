@@ -3,7 +3,7 @@ Contains the prompts used by LLMs for routing, answering...
 """
 
 #
-# This is a template for the prompt used by the router
+# This is a template for the prompt used by the Router
 #
 PROMPT_ROUTER_TEMPLATE = """
 You are an AI assistant that can help decide what is the best action to serve a user request.
