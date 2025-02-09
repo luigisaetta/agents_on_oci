@@ -4,6 +4,7 @@ verbose = false
 [chunking]
 # due to problems with tokenizer
 chunks_max_tokens = 1024
+tokenizer_model = "CohereForAI/c4ai-command-r-plus-08-2024"
 
 [embeddings]
 embed_model_id = "cohere.embed-multilingual-v3.0"

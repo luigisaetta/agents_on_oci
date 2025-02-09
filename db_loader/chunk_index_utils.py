@@ -1,15 +1,21 @@
 """
 chunk index utils
+
+This version is based on docling
 """
 
 import os
 from docling.document_converter import DocumentConverter
 from docling.chunking import HybridChunker
 from langchain.docstore.document import Document
+from transformers import AutoTokenizer
+from config_reader import ConfigReader
 from utils import get_console_logger
 
-logger = get_console_logger()
 
+# TODO: handle tokenizer_name
+logger = get_console_logger()
+config = ConfigReader("config.toml")
 
 def get_page_num(_chunk):
     """
@@ -38,9 +44,13 @@ def load_book_and_split(books_dir, book_name, max_tokens):
     converter = DocumentConverter()
     doc = converter.convert(source=full_name).document
 
+    # the tokenizer
+    tokenizer_model = config.find_key("tokenizer_model")
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_model)
+
     logger.info("Chunking...")
     hybrid_chunker = HybridChunker(max_tokens=max_tokens, merge_peers=True,
-                                   tokenizer="Xenova/Meta-Llama-3.1-Tokenizer")
+                                   tokenizer=tokenizer)
     
     chunk_iter = hybrid_chunker.chunk(dl_doc=doc)
     chunks = list(chunk_iter)
