@@ -10,6 +10,7 @@ from docling.chunking import HybridChunker
 from langchain.docstore.document import Document
 from transformers import AutoTokenizer
 from config_reader import ConfigReader
+from chunk_index_utils import get_page_num
 
 config = ConfigReader("config.toml")
 
@@ -21,18 +22,6 @@ def file_list(directory):
     return [
         f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))
     ]
-
-
-def get_page_num(_chunk):
-    """
-    try to get the page num (doesn't work for docx)
-    """
-    try:
-        page_num = _chunk.meta.doc_items[0].prov[0].page_no
-    except:
-        page_num = ""
-
-    return page_num
 
 
 #
