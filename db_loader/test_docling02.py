@@ -13,6 +13,7 @@ from config_reader import ConfigReader
 
 config = ConfigReader("config.toml")
 
+
 def file_list(directory):
     """
     return the file list in dir
@@ -44,7 +45,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 lc_docs = []
 
-for f_name in ["aifa_aspirina_500_2022.pdf"]: # file_list(BOOKS_DIR):
+for f_name in ["aifa_aspirina_500_2022.pdf"]:  # file_list(BOOKS_DIR):
     full_name = os.path.join(BOOKS_DIR, f_name)
 
     print("Docling converting: ", f_name)
@@ -55,8 +56,9 @@ for f_name in ["aifa_aspirina_500_2022.pdf"]: # file_list(BOOKS_DIR):
     tokenizer_model = config.find_key("tokenizer_model")
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_model)
 
-    hybrid_chunker = HybridChunker(max_tokens=MAX_TOKENS, merge_peers=True,
-                                   tokenizer=tokenizer)
+    hybrid_chunker = HybridChunker(
+        max_tokens=MAX_TOKENS, merge_peers=True, tokenizer=tokenizer
+    )
     chunk_iter = hybrid_chunker.chunk(dl_doc=doc)
     chunks = list(chunk_iter)
 

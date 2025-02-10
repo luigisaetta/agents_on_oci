@@ -17,6 +17,7 @@ from utils import get_console_logger
 logger = get_console_logger()
 config = ConfigReader("config.toml")
 
+
 def get_page_num(_chunk):
     """
     try to get the page num (doesn't work for docx)
@@ -29,15 +30,24 @@ def get_page_num(_chunk):
     return page_num
 
 
-def load_book_and_split(books_dir, book_name, max_tokens):
+def get_tokenizer():
     """
-    read a book, split in chunks using docling
+    get the tokenizer.
+
+    name from config.toml
     """
     # to remove warning
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-    lc_docs = []
+    tokenizer_model = config.find_key("tokenizer_model")
+    _tokenizer = AutoTokenizer.from_pretrained(tokenizer_model)
+    return _tokenizer
 
+
+def load_book_and_split(books_dir, book_name, max_tokens):
+    """
+    read a book, split in chunks using docling
+    """
     full_name = os.path.join(books_dir, book_name)
 
     logger.info("Docling converting: %s", book_name)
@@ -45,17 +55,19 @@ def load_book_and_split(books_dir, book_name, max_tokens):
     doc = converter.convert(source=full_name).document
 
     # the tokenizer
-    tokenizer_model = config.find_key("tokenizer_model")
-    tokenizer = AutoTokenizer.from_pretrained(tokenizer_model)
+    tokenizer = get_tokenizer()
 
     logger.info("Chunking...")
-    hybrid_chunker = HybridChunker(max_tokens=max_tokens, merge_peers=True,
-                                   tokenizer=tokenizer)
-    
+    hybrid_chunker = HybridChunker(
+        max_tokens=max_tokens, merge_peers=True, tokenizer=tokenizer
+    )
+
     chunk_iter = hybrid_chunker.chunk(dl_doc=doc)
     chunks = list(chunk_iter)
 
     logger.info("Creating serialized chunks...")
+
+    lc_docs = []
 
     for chunk in chunks:
         enriched_text = hybrid_chunker.serialize(chunk=chunk)

@@ -6,7 +6,7 @@ beware: check what you're doing
 
 import argparse
 
-from db_doc_loader_backend import get_db_connection
+from oci_db_loader import OCIDBLoader
 from oraclevs_4_db_loading import OracleVS4DBLoading
 
 from utils import get_console_logger
@@ -30,7 +30,9 @@ logger.info("")
 logger.info("Dropping collection: %s", collection_name)
 logger.info("")
 
-with get_db_connection() as conn:
+loader = OCIDBLoader()
+
+with loader.get_db_connection() as conn:
     OracleVS4DBLoading.drop_collection(conn, collection_name)
 
 logger.info("Collection dropped !")
