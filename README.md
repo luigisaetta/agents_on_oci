@@ -3,6 +3,7 @@ This repo will contain a set of **building blocks** and **examples**
 to build **Agentic AI** using Python, **OCI** and Open Source
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
 
 ## Motivation
 I often have to design and develop prototypes, to show to our partners
