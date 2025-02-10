@@ -22,13 +22,19 @@ collection_name = args.collection_name
 loader = OCIDBLoader()
 
 with loader.get_db_connection() as conn:
-    docs_list = OracleVS4DBLoading.list_books_in_collection(conn, collection_name)
+    # check that the collection exists
+    coll_list = OracleVS4DBLoading.list_collections(conn)
 
-logger.info("")
-logger.info("List of documents in collection %s", collection_name)
-logger.info("")
+    if collection_name in coll_list:
+        docs_list = OracleVS4DBLoading.list_books_in_collection(conn, collection_name)
 
-for doc in docs_list:
-    logger.info("* %s", doc)
+        logger.info("")
+        logger.info("List of documents in collection %s", collection_name)
+        logger.info("")
+
+        for doc in docs_list:
+            logger.info("* %s", doc)
+    else:
+        logger.info("Collection: %s doesn't exist in DB.", collection_name)
 
 logger.info("")

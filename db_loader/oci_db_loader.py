@@ -139,21 +139,61 @@ class OCIDBLoader:
                 self.logger.info("Loading completed.")
                 self.logger.info("")
 
-                mean, stdev, perc_75 = compute_stats(docs)
+                _mean, _stdev, _perc_75 = compute_stats(docs)
+                self.log_stats(
+                    n_chunks=len(docs), mean=_mean, stdev=_stdev, perc_75=_perc_75
+                )
 
+    def from_documents(self, books_dir, collection_name):
+        """
+        create anew collection and add the docs in cooks_dir
+        """
+        max_tokens = self.config.find_key("chunks_max_tokens")
+
+        with self.get_db_connection() as conn:
+            collection_list = OracleVS4DBLoading.list_collections(conn)
+
+            # check that the collection doens't exist yet
+            if collection_name in collection_list:
                 self.logger.info("")
-                self.logger.info("Statistics on the distribution of chunk lengths:")
-                self.logger.info("Total num. of chunks loaded: %s", len(docs))
-                self.logger.info("Avg. length: %s (chars)", mean)
-                self.logger.info("Std dev: %s (chars)", stdev)
-                self.logger.info("75-perc: %s (chars)", perc_75)
+                self.logger.error(
+                    "Collection %s alredy exist, exiting!", collection_name
+                )
                 self.logger.info("")
+                return
+
+            # ok, collection is new
+            new_books_list = file_list(books_dir)
+
+            docs = []
+
+            for book_name in new_books_list:
+                # strips path
+                self.logger.info("Loading %s", book_name)
+
+                docs += load_book_and_split(books_dir, book_name, max_tokens)
+
+            # embed and save to  DB
+            if len(docs) > 0:
+                embed_model = self.get_embed_model()
+
+                # create collection and load
+                self.manage_collection(
+                    conn, docs, embed_model, collection_name, is_new=True
+                )
+
+                self.logger.info("Loading completed.")
+                self.logger.info("")
+
+                _mean, _stdev, _perc_75 = compute_stats(docs)
+                self.log_stats(
+                    n_chunks=len(docs), mean=_mean, stdev=_stdev, perc_75=_perc_75
+                )
 
     def manage_collection(self, conn, docs, embed_model, collection_name, is_new):
         """
         Create or update a collection in the 23AI vector store.
         """
-
         if is_new:
             self.logger.info(
                 "Creating collection '%s' and adding documents...", collection_name
@@ -199,3 +239,16 @@ class OCIDBLoader:
                     "Delete docs: %s in collection %s", doc_names, collection_name
                 )
                 OracleVS4DBLoading.delete_documents(conn, collection_name, doc_names)
+
+    # helper
+    def log_stats(self, n_chunks, mean, stdev, perc_75):
+        """
+        log the stats on the distribuction of chunks lenghts
+        """
+        self.logger.info("")
+        self.logger.info("Statistics on the distribution of chunk lengths:")
+        self.logger.info("Total num. of chunks loaded: %s", n_chunks)
+        self.logger.info("Avg. length: %s (chars)", mean)
+        self.logger.info("Std dev: %s (chars)", stdev)
+        self.logger.info("75-perc: %s (chars)", perc_75)
+        self.logger.info("")

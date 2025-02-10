@@ -1,5 +1,5 @@
 """
-Extensions to Oracle VS for the db_loading utility
+Extensions to Oracle VS bsed on 23AI for the oci_db_loading utility
 """
 
 import os
