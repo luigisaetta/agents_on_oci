@@ -26,6 +26,7 @@ Then, I thought, **why not sharing these things**?
 ## Examples
 * [Test OCI AI RAG Agent](./test_oci_rag_agent.py)
 * [Test SQL Agent](./test_select_ai_sql_agent.ipynb)
+* [Agent with LangGraph and routing](./langgraph_with_routing.ipynb)
 
 ## Best practices
 Well, even if you're doing wonderful AI, it doesn't mean that you should forget that to be reusable, you should
