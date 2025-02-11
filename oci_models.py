@@ -15,6 +15,9 @@ ROUTER_ENDPOINT = config_reader.find_key("router_model_endpoint")
 CUSTOM_RAG_MODEL_ID = config_reader.find_key("custom_rag_model_id")
 CUSTOM_RAG_ENDPOINT = config_reader.find_key("custom_rag_model_endpoint")
 
+AD_MODEL_ID = config_reader.find_key("ad_model_id")
+AD_ENDPOINT = config_reader.find_key("ad_model_endpoint")
+
 
 def create_model_for_routing():
     """
@@ -40,5 +43,18 @@ def create_model_for_custom_rag():
         compartment_id=COMPARTMENT_OCID,
         service_endpoint=CUSTOM_RAG_ENDPOINT,
         model_kwargs={"temperature": 0.1, "max_tokens": 1024},
+    )
+    return llm
+
+
+def create_model_for_answer_directly():
+    """
+    Create the OCI Model for answering directly
+    """
+    llm = ChatOCIGenAI(
+        model_id=AD_MODEL_ID,
+        compartment_id=COMPARTMENT_OCID,
+        service_endpoint=AD_ENDPOINT,
+        model_kwargs={"temperature": 0.1, "max_tokens": 2024},
     )
     return llm

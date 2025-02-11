@@ -19,7 +19,7 @@ Instructions:
 - if the request is for clarification or contains a question on a report you generated the classification must be: analyze_data
 - if the request asks to drop a table, delete data, update data or insert data, the classification must be: not_allowed
 - if the request is for an information an LLM can directly provide, classification must be: answer_directly
-- if you don't have enough information to classify, the classification must be: not_defined
+- if the request is not clear or you don't have enough information to classify, the classification must be: not_defined
 - provide only the JSON result. Don't add other comments or questions.
 
 Examples:
@@ -68,8 +68,9 @@ Classification: answer_directly
 Question:  
 """
 
-PROMPT_AD = """
-You are an AI assistant that can help answer user's questions.
+PROMPT_NOT_DEFINED = """
+You are an AI assistant that can help users to clarify what they can ask for.
+Report always the user question.
 Use always a formal and professional tone.
 If you don't have all the information to answer ask for more information.
 Format the response in markdown.
