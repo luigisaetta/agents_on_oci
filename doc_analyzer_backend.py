@@ -39,6 +39,24 @@ class State(TypedDict):
     final_output: str
 
 
+# utility function
+def invoke_llm(task_name: str, request: str):
+    """
+    Function to handle LLM call
+    """
+    logger.info("Calling %s...", task_name)
+
+    try:
+        msg = llm.invoke(request)
+        response = msg.content if msg else "Error: No response from LLM"
+    except Exception as e:
+        logger.error("%s failed: %s", task_name, e)
+        response = "Error: Unable to process request"
+
+    send_notification(f"{task_name} completed!")
+    return response
+
+
 # Nodes/tools
 def call_llm_0(state: State):
     """
@@ -49,92 +67,72 @@ def call_llm_0(state: State):
     """
     logger.info("Calling llm_0...")
 
-    return
+    return {}
 
 
 def call_llm_1(state: State):
     """First LLM call to generate spelling errors list"""
-    logger.info("Calling llm_1 to identify spelling errors...")
-
     top_e = 10
-
     request = f"Identify top {top_e} spelling errors in the following text: {state['file_text']}"
 
-    msg = llm.invoke(request)
+    response = invoke_llm("Check spelling errors", request)
 
-    # send a notification for the UI to display
-    send_notification("Spelling error check completed !")
-
-    return {"output1": msg.content}
+    return {"output1": response}
 
 
 def call_llm_2(state: State):
     """Second LLM call to analyze clarity"""
-    logger.info("Calling llm_2 to analyze clarity...")
-
     request = f"""Evaluate from the point of view of clarity the following text:
     {state['file_text']}.
     Provide a score ranging from 1 to 10 (10 is best).
     """
 
-    msg = llm.invoke(request)
+    response = invoke_llm("Check clarity", request)
 
-    # send a notification for the UI to display
-    send_notification("Clarity Analysis completed !")
-
-    return {"output2": msg.content}
+    return {"output2": response}
 
 
 def call_llm_3(state: State):
     """Third LLM call to analyze goals"""
-    logger.info("Calling llm_3 to analyze goals...")
-
     request = f"""Evaluate the following text: {state['file_text']}.
     Check that it defines clear and measurable goals.
     Provide a score ranging from 1 to 10 (10 is best).
     """
 
-    msg = llm.invoke(request)
+    response = invoke_llm("Check goals", request)
 
-    # send a notification for the UI to display
-    send_notification("Goal Analysis completed !")
-
-    return {"output3": msg.content}
+    return {"output3": response}
 
 
 def call_llm_4(state: State):
     """Fourth LLM call to summarize"""
-    logger.info("Calling llm_4 to summarize...")
-
     request = f"""Summarize the following text in one page: {state['file_text']}.
     """
 
-    msg = llm.invoke(request)
+    response = invoke_llm("Summarize", request)
 
-    # send a notification for the UI to display
-    send_notification("Summarization completed !")
-
-    return {"output4": msg.content}
+    return {"output4": response}
 
 
 def call_llm_anonymize(state: State):
     """LLM call to anonymize"""
-
-    logger.info("Calling anonymizer ...")
-
     request = f"""
-    Anonymize the following text replacing: client/customer name, people names, 
-    emails, languages' names.
-    Don't anonymize: the document name.
-    Text: {state['combined_output']}.
+    Anonymize the following text by replacing:
+    - Client/customer names
+    - People’s names
+    - Emails
+    - Language names
+
+    Do NOT anonymize:
+    - The document name
+
+    Text to anonymize:
+    {state['combined_output']}
     """
 
-    msg = llm.invoke(request)
+    response = invoke_llm("Anonymize", request)
 
-    # send a notification for the UI to display
-    send_notification("Anonimization completed !")
-
-    return {"final_output": msg.content}
+    return {"final_output": response}
 
 
 def aggregator(state: State):

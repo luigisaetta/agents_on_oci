@@ -48,6 +48,7 @@ if uploaded_file is not None:
     f_name = uploaded_file.name
 
     if extracted_text.strip():
+        # we have text to process
         # instantiate the agent
         workflow = build_workflow()
 
@@ -55,9 +56,8 @@ if uploaded_file is not None:
         inputs = {"file_name": f_name, "file_text": extracted_text}
 
         # invoke the agent
-        _iter = workflow.stream(inputs, stream_mode="messages")
-
         st.info("Processing file..")
+        _iter = workflow.stream(inputs, stream_mode="messages")
 
         stream_output(_iter)
 
