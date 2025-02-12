@@ -49,7 +49,7 @@ def create_model_for_custom_rag():
 
 def create_model_for_answer_directly():
     """
-    Create the OCI Model for answering directly
+    Create the OCI Model for answering directly (no RAG)
     """
     llm = ChatOCIGenAI(
         model_id=AD_MODEL_ID,

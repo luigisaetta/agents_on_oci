@@ -1,13 +1,12 @@
 """
-Functions for doc analyzer
+Functions for the Document Analyzer
 """
 
-import re
 from typing_extensions import TypedDict
 from langgraph.graph import StateGraph, START, END
-import pdfplumber
 
 from oci_models import create_model_for_answer_directly
+from notification_queue import send_notification
 from utils import get_console_logger
 
 logger = get_console_logger()
@@ -18,33 +17,13 @@ logger = get_console_logger()
 llm = create_model_for_answer_directly()
 
 
-def read_pdf(file_name):
-    """
-    read the content of the pdf file
-    """
-    testo = ""
-    with pdfplumber.open(file_name) as pdf:
-        for pagina in pdf.pages:
-            testo += pagina.extract_text() + "\n"
-    return testo
-
-
-def extract_file_name(text):
-    """
-    extract the file name
-    """
-    match = re.search(r"```(.*?)```", text)
-    if match:
-        return match.group(1)
-    return None
-
-
 # Graph state
 class State(TypedDict):
     """
     The state of the workflow
     """
 
+    # user request, in UI not used
     request: str
     file_name: str
     file_text: str
@@ -60,12 +39,13 @@ class State(TypedDict):
     final_output: str
 
 
-# Nodes
+# Nodes/tools
 def call_llm_0(state: State):
     """
     Extract the file name and read it
 
     in the UI version this is not really needed
+    because the input is the uploaded file
     """
     logger.info("Calling llm_0...")
 
@@ -74,19 +54,22 @@ def call_llm_0(state: State):
 
 def call_llm_1(state: State):
     """First LLM call to generate spelling errors list"""
-    top_e = 10
-
     logger.info("Calling llm_1 to identify spelling errors...")
 
+    top_e = 10
+
     request = f"Identify top {top_e} spelling errors in the following text: {state['file_text']}"
+
     msg = llm.invoke(request)
+
+    # send a notification for the UI to display
+    send_notification("Spelling error check completed !")
 
     return {"output1": msg.content}
 
 
 def call_llm_2(state: State):
     """Second LLM call to analyze clarity"""
-
     logger.info("Calling llm_2 to analyze clarity...")
 
     request = f"""Evaluate from the point of view of clarity the following text:
@@ -96,12 +79,14 @@ def call_llm_2(state: State):
 
     msg = llm.invoke(request)
 
+    # send a notification for the UI to display
+    send_notification("Clarity Analysis completed !")
+
     return {"output2": msg.content}
 
 
 def call_llm_3(state: State):
     """Third LLM call to analyze goals"""
-
     logger.info("Calling llm_3 to analyze goals...")
 
     request = f"""Evaluate the following text: {state['file_text']}.
@@ -111,12 +96,14 @@ def call_llm_3(state: State):
 
     msg = llm.invoke(request)
 
+    # send a notification for the UI to display
+    send_notification("Goal Analysis completed !")
+
     return {"output3": msg.content}
 
 
 def call_llm_4(state: State):
     """Fourth LLM call to summarize"""
-
     logger.info("Calling llm_4 to summarize...")
 
     request = f"""Summarize the following text in one page: {state['file_text']}.
@@ -124,7 +111,30 @@ def call_llm_4(state: State):
 
     msg = llm.invoke(request)
 
+    # send a notification for the UI to display
+    send_notification("Summarization completed !")
+
     return {"output4": msg.content}
+
+
+def call_llm_anonymize(state: State):
+    """LLM call to anonymize"""
+
+    logger.info("Calling anonymizer ...")
+
+    request = f"""
+    Anonymize the following text replacing: client/customer name, people names, 
+    emails, languages' names.
+    Don't anonymize: the document name.
+    Text: {state['combined_output']}.
+    """
+
+    msg = llm.invoke(request)
+
+    # send a notification for the UI to display
+    send_notification("Anonimization completed !")
+
+    return {"final_output": msg.content}
 
 
 def aggregator(state: State):
@@ -142,21 +152,9 @@ def aggregator(state: State):
     return {"combined_output": combined}
 
 
-def call_llm_anonymize(state: State):
-    """LLM call to anonymize"""
-
-    logger.info("Calling llm_anonymize to anonymize text...")
-
-    request = f"""Anonymize the following text replacing client/customer name, people names, emails.
-    Don't anonymize: the document name.
-    Text: {state['combined_output']}.
-    """
-
-    msg = llm.invoke(request)
-
-    return {"final_output": msg.content}
-
-
+#
+# Here we build the graph
+#
 def build_workflow():
     """
     Build the workflow
@@ -170,7 +168,7 @@ def build_workflow():
     parallel_builder.add_node("call_llm_2", call_llm_2)
     parallel_builder.add_node("call_llm_3", call_llm_3)
     parallel_builder.add_node("call_llm_4", call_llm_4)
-    parallel_builder.add_node("call_llm_anonymize", call_llm_anonymize)
+    parallel_builder.add_node("anonymizer", call_llm_anonymize)
     parallel_builder.add_node("aggregator", aggregator)
 
     # Add edges to connect nodes
@@ -188,8 +186,8 @@ def build_workflow():
     parallel_builder.add_edge("call_llm_3", "aggregator")
     parallel_builder.add_edge("call_llm_4", "aggregator")
 
-    parallel_builder.add_edge("aggregator", "call_llm_anonymize")
-    parallel_builder.add_edge("call_llm_anonymize", END)
+    parallel_builder.add_edge("aggregator", "anonymizer")
+    parallel_builder.add_edge("anonymizer", END)
 
     parallel_workflow = parallel_builder.compile()
 

@@ -16,8 +16,26 @@ def extract_text_from_pdf(pdf_file):
     return text
 
 
+def stream_output(_iterator):
+    """
+    Utility to support streaming of output from last node
+    """
+    # Placeholder for streaming output
+    output_placeholder = st.empty()
+
+    accumulated_response = ""
+    for message, metadata in _iterator:
+        # only the output from the final node
+        if metadata.get("langgraph_node") == "anonymizer":
+            # Append new content
+            accumulated_response += message.content
+            # Update the placeholder with the accumulated content
+            output_placeholder.markdown(accumulated_response, unsafe_allow_html=True)
+
+
 # Streamlit UI
-st.title("AI Doc Analyzer")
+st.title("AI Document Analyzer")
+
 
 # Move file uploader to the sidebar
 with st.sidebar:
@@ -33,11 +51,16 @@ if uploaded_file is not None:
         # instantiate the agent
         workflow = build_workflow()
 
-        with st.spinner():
-            # invoke the agent
-            state = workflow.invoke({"file_name": f_name, "file_text": extracted_text})
+        # inputs to the agent
+        inputs = {"file_name": f_name, "file_text": extracted_text}
 
-        st.markdown(state["final_output"], unsafe_allow_html=True)
+        # invoke the agent
+        _iter = workflow.stream(inputs, stream_mode="messages")
+
+        st.info("Processing file..")
+
+        stream_output(_iter)
+
     else:
         st.warning(
             "No text could be extracted. The PDF might be scanned or contain images."
