@@ -62,8 +62,9 @@ Well, it is not a best practice to redo again what was already done by someone e
 [RAG Agent] If you need a reference to setup the **OCI AI RAG Agent**, based on 23 AI, [here](https://snicholspa.github.io/tips_tricks_howtos/oci_genai_service/genai_agents_vector_kb/#Task1:CreateOCIPoliciestoAccessOCIGenAIAgents) you can find a good one.
 
 ## Project Status
-(06/02/2025) Project has just started
-(07/02/2025) Published first components and examples on Github
+* (06/02/2025) Project has just started
+* (07/02/2025) Published first components and examples on Github
+* Added document analyzer, with parallel workflow
 
 therefore, it is wip.
 
