@@ -6,14 +6,11 @@ to build **Agentic AI** using Python, **OCI** and Open Source
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
 
 ## Motivation
-I often have to design and develop prototypes, to show to our partners
-and customers how to use OCI Generative AI Service and OCI AI Agents to build
-solutions for their requirements.
+As part of my role, I frequently design and develop prototypes to demonstrate the application of Oracle Cloud Infrastructure (OCI) Generative AI Service and OCI AI Agents in crafting solutions tailored to our partners' and customers' requirements.
 
-I decided then to curate a list of basic building blocks and examples, to be able to more rapidly
-assemble these prototypes or any other requested demo.
+To expedite the assembly of these prototypes and any requested demonstrations, I have curated **a collection of fundamental building blocks** and **examples**.
 
-Then, I thought, **why not sharing these things**?
+I am now pleased to share these resources with you.
 
 ## List of basic building blocks
 * A reader for the configuration settings (TOML format)
@@ -21,12 +18,15 @@ Then, I thought, **why not sharing these things**?
 * OCI AI **RAG Agent** client
 * **SQL Agent** (based on SelectAI) client
 * A **custom RAG agent**, based on Langchain, OCI and 23AI
+* A **Summarizer**
+* A component to help **anonymize** documents
 * Utility to load documents in DB 23AI (db_loader)
 
 ## Examples
 * [Test OCI AI RAG Agent](./test_oci_rag_agent.py)
 * [Test SQL Agent](./test_select_ai_sql_agent.ipynb)
 * [Agent with LangGraph and routing](./langgraph_with_routing.ipynb)
+* [Agent for Document Analysis](./doc_analyzer.ipynb)
 
 ## Best practices
 Well, even if you're doing wonderful AI, it doesn't mean that you should forget that to be reusable, you should
