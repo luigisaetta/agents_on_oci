@@ -1,6 +1,7 @@
 """
 OCI Summarizer
 """
+
 from oci_models import create_model_for_answer_directly
 from utils import get_console_logger
 
@@ -25,6 +26,7 @@ PROMPT_SUMMARIZER_TEMPLATE = """
     [Well-structured and concise summary, approximately 250-300 words]  
     """
 
+
 class OCISummarizer:
     """
     This class provides a summarizer
@@ -35,10 +37,13 @@ class OCISummarizer:
         Init
         """
         self.llm = create_model_for_answer_directly()
-    
-    def summarize(self, text:str) -> str:
+
+    def summarize(self, text: str) -> str:
+        """
+        summarize
+        """
         PROMPT_SUMMARIZER = PROMPT_SUMMARIZER_TEMPLATE.format(text=text)
-        
+
         try:
             msg = self.llm.invoke(PROMPT_SUMMARIZER)
             response = msg.content if msg else "Error: No response from LLM"
@@ -47,4 +52,3 @@ class OCISummarizer:
             response = "Error: Unable to process request"
 
         return response
-        

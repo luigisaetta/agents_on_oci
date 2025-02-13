@@ -7,6 +7,7 @@ from langgraph.graph import StateGraph, START, END
 
 from oci_models import create_model_for_answer_directly
 from oci_summarizer import OCISummarizer
+from oci_anonymizer import OCIAnonymizer
 from notification_queue import send_notification
 from utils import get_console_logger
 
@@ -181,7 +182,7 @@ def call_llm_4(state: State) -> dict:
 
     summarizer = OCISummarizer()
 
-    response = summarizer.summarize(state['file_text'])
+    response = summarizer.summarize(state["file_text"])
 
     return {"output4": response}
 
@@ -225,23 +226,12 @@ def call_llm_5(state: State) -> dict:
 
 def call_llm_anonymize(state: State) -> dict:
     """LLM call to anonymize"""
-    request = f"""
-    Anonymize the following text by replacing:
-    - Client/customer names
-    - Company names (different by Oracle)
-    - People’s names
-    - Emails
-    - Language names
+    logger.info("Calling anonymizer...")
 
-    Do NOT anonymize:
-    - The word Oracle
-    - The document name
+    anonymizer = OCIAnonymizer()
 
-    Text to anonymize:
-    {state['combined_output']}
-    """
-
-    response = invoke_llm("Anonymize", request)
+    # anonimization is done on the aggregator's output
+    response = anonymizer.anonymize(state["combined_output"])
 
     return {"final_output": response}
 
