@@ -6,6 +6,7 @@ from typing_extensions import TypedDict
 from langgraph.graph import StateGraph, START, END
 
 from oci_models import create_model_for_answer_directly
+from oci_summarizer import OCISummarizer
 from notification_queue import send_notification
 from utils import get_console_logger
 
@@ -176,26 +177,11 @@ def call_llm_3(state: State) -> dict:
 
 def call_llm_4(state: State) -> dict:
     """Fourth LLM call to summarize"""
-    request = f"""
-    You are an expert summarizer with strong analytical skills. 
-    Your task is to generate a **clear, concise, and well-structured** summary of the following text.
+    logger.info("Calling summarizer...")
 
-    ### **Instructions:**
-    - Summarize the text in a way that captures its **main ideas, key points, and essential details**.
-    - Keep the summary **within one page** (approximately **250-300 words**).
-    - Maintain **logical flow and coherence** in the summary.
-    - Preserve the **original intent and meaning** while using **clear and concise language**.
-    - Avoid unnecessary details, repetitions, or excessive examples.
+    summarizer = OCISummarizer()
 
-    ### **Text to Summarize:**
-    {state['file_text']}
-
-    ### **Expected Response Format:**
-    **Summary:**  
-    [Well-structured and concise summary, approximately 250-300 words]  
-    """
-
-    response = invoke_llm("Summarize", request)
+    response = summarizer.summarize(state['file_text'])
 
     return {"output4": response}
 
