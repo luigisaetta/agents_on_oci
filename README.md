@@ -1,6 +1,6 @@
 # AI Agents on OCI
 This repo will contain a set of **building blocks** and **examples** 
-to build **Agentic AI** using Python, **OCI** and Open Source
+to build **Agentic AI** solutions using Python, **OCI** and Open Source
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
@@ -18,7 +18,7 @@ I am now pleased to share these resources with you.
 * OCI AI **RAG Agent** client
 * **SQL Agent** (based on SelectAI) client
 * A **custom RAG agent**, based on Langchain, OCI and 23AI
-* A **Summarizer**
+* A Document **Summarizer**
 * A component to help **anonymize** documents
 * Utility to load documents in DB 23AI (db_loader)
 
@@ -27,6 +27,7 @@ I am now pleased to share these resources with you.
 * [Test SQL Agent](./test_select_ai_sql_agent.ipynb)
 * [Agent with LangGraph and routing](./langgraph_with_routing.ipynb)
 * [Agent for Document Analysis](./doc_analyzer.ipynb)
+* [Basic chatbot with memory](./basic_chatbot.ipynb)
 
 ## Best practices
 Well, even if you're doing wonderful AI, it doesn't mean that you should forget that to be reusable, you should
