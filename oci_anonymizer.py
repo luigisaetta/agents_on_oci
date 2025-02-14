@@ -1,5 +1,8 @@
 """
 OCI Anonymizer
+
+Usage: to customize the list of entity you want to anonymize (and then replace)
+change the prompt
 """
 
 from oci_models import create_model_for_answer_directly

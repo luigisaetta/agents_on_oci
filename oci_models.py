@@ -34,7 +34,7 @@ def create_model_for_routing():
     return llm
 
 
-def create_model_for_custom_rag():
+def create_model_for_custom_rag(temperature=0.1, max_tokens=1024):
     """
     Create the OCI Model for custom rag
     """
@@ -42,12 +42,12 @@ def create_model_for_custom_rag():
         model_id=CUSTOM_RAG_MODEL_ID,
         compartment_id=COMPARTMENT_OCID,
         service_endpoint=CUSTOM_RAG_ENDPOINT,
-        model_kwargs={"temperature": 0.1, "max_tokens": 1024},
+        model_kwargs={"temperature": temperature, "max_tokens": max_tokens},
     )
     return llm
 
 
-def create_model_for_answer_directly():
+def create_model_for_answer_directly(temperature=0.1, max_tokens=2048):
     """
     Create the OCI Model for answering directly (no RAG)
     """
@@ -55,6 +55,6 @@ def create_model_for_answer_directly():
         model_id=AD_MODEL_ID,
         compartment_id=COMPARTMENT_OCID,
         service_endpoint=AD_ENDPOINT,
-        model_kwargs={"temperature": 0.1, "max_tokens": 2024},
+        model_kwargs={"temperature": temperature, "max_tokens": max_tokens},
     )
     return llm
