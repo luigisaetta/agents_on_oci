@@ -19,7 +19,7 @@ AD_MODEL_ID = config_reader.find_key("ad_model_id")
 AD_ENDPOINT = config_reader.find_key("ad_model_endpoint")
 
 
-def create_model_for_routing():
+def create_model_for_routing(temperature=0, max_tokens=512):
     """
     Create the OCI Model for routing
     """
@@ -29,7 +29,7 @@ def create_model_for_routing():
         service_endpoint=ROUTER_ENDPOINT,
         # for the router we need deterministic output (temp=0)
         # and we don't need many tokens for output (max_tokens=512)
-        model_kwargs={"temperature": 0, "max_tokens": 512},
+        model_kwargs={"temperature": temperature, "max_tokens": max_tokens},
     )
     return llm
 
