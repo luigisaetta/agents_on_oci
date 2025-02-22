@@ -1,5 +1,6 @@
 """
 This file contains the pluggable component for the transport
+to enable tracing to APM
 """
 
 import requests
@@ -38,6 +39,6 @@ def http_transport(encoded_span):
             APM_UPLOAD_ENDPOINT_URL,
             data=encoded_span,
             headers={"Content-Type": APM_CONTENT_TYPE},
-            timeout=10,
+            timeout=30,
         )
     return result
