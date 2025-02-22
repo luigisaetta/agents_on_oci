@@ -1,3 +1,7 @@
+"""
+Define the structure of the document to be created
+"""
+
 STRUCTURE = """
 ## List of sections and their description: 
 
@@ -7,12 +11,14 @@ STRUCTURE = """
 
 ### 2. Overview
 **Description:** This section provides a high-level summary of the Proof of Concept (PoC) objectives, key stakeholders, and the intended business impact. It should clearly state the purpose and scope of the PoC, including any background on why the initiative is being undertaken.
+**Special Instructions:** put the name of the customer in bold
 
 ### 3. Scope and Approach
 **Description:** Defines the boundaries of the PoC, including the technologies, platforms, and specific solutions to be tested. This section should detail:
    - The key components and services involved.
    - The specific technical configurations required.
    - The method and approach for testing and evaluating the PoC.
+**Special Instructions:** put the name of the customer in bold
 
 ### 4. Timelines
 **Description:** Presents the detailed timeline of the PoC, breaking it down into key phases with estimated durations. Each phase should have:
@@ -89,11 +95,15 @@ STRUCTURE = """
 
 ## **17. Contacts**
 **Description**:** The list of contacts, with their role and emails
-**Special Instructions:** organise the contacts' information in a well-formatted table
+**Special Instructions:** organize the contacts' information in a well-formatted table
 | Name  | Role | Email |  
 |-------|------|-------|  
 | {Contact Name 1} | {Role} | {Email} |  
 | {Contact Name 2} | {Role} | {Email} |  
-| {Contact Name 3} | {Role} | {Email} |  
+| {Contact Name 3} | {Role} | {Email} | 
+
+## **18. Acronyms**
+**Description**:** The list of all acronyms contained in the text, with their explanation.
+**Special Instructions:** This is a mandatory section.
 
 """
