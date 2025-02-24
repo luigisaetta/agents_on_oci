@@ -24,11 +24,11 @@ class BaseTracingNode(Runnable, ABC):
     custom logic
     """
 
-    def __init__(self, service_name="test01", json_schema=None):
+    def __init__(self, service_name=None, json_schema=None):
         """
         Init the node with service name and json schema
         """
-        self.service_name = service_name
+        self.service_name = service_name or "default_service"
         self.json_schema = json_schema
 
     def get_llm_model(
@@ -51,8 +51,18 @@ class BaseTracingNode(Runnable, ABC):
 
     def invoke(self, input, config=None, **kwargs):
         """
-        Wrap execution with APM tracing dynamically
-        based on subclass name
+        Executes the node with APM tracing.
+
+        Args:
+            input (Any): The input data for processing.
+            config (Optional[Dict]): Optional configuration parameters.
+            **kwargs: Additional parameters.
+
+        Returns:
+            Any: The output from the subclass-specific `_run_impl()` method.
+
+        Raises:
+            Exception: If `_run_impl()` encounters an error.
         """
         # for now config is not used
 
@@ -61,24 +71,29 @@ class BaseTracingNode(Runnable, ABC):
         # Customize span name
         span_name = f"node_{subclass_name}"
 
-        with zipkin_span(
-            service_name=self.service_name,
-            span_name=span_name,
-            encoding=Encoding.V2_JSON,
-        ):
-            # Common pre-run logic (if any)
-            logger.info("Calling %s", subclass_name)
+        try:
+            with zipkin_span(
+                service_name=self.service_name,
+                span_name=span_name,
+                encoding=Encoding.V2_JSON,
+            ):
+                logger.info("Calling %s", subclass_name)
 
-            output = self._run_impl(input)
+                output = self._run_impl(input)
 
-            # Common post-run logic (if any)
-            return output
+                return output
+        except Exception as e:
+            logger.error("Error in %s: %s", subclass_name, str(e))
+            raise
 
     @abstractmethod
-    def _run_impl(self, input):
+    def _run_impl(self, _input):
         """
-        Subclasses must implement this method.
+        Subclasses must implement this method to define node execution logic.
 
-        IN the method implementation you can call get_llm_model
-        to get the LLM model
+        Args:
+            _input (Any): Input data to process.
+
+        Returns:
+            Any: The processed output.
         """
