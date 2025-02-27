@@ -1,6 +1,10 @@
 [general]
 verbose = false
 
+[llm]
+llm_model_id = "meta.llama-3.3-70b-instruct"
+llm_endpoint = "https://inference.generativeai.eu-frankfurt-1.oci.oraclecloud.com"
+
 [router]
 router_model_id = "cohere.command-r-plus-08-2024"
 router_model_endpoint = "https://inference.generativeai.eu-frankfurt-1.oci.oraclecloud.com"
@@ -10,9 +14,14 @@ rag_endpoint = "https://agent-runtime.generativeai.us-chicago-1.oci.oraclecloud.
 
 [custom_rag]
 collection_name = "BOOKS"
-custom_rag_top_k = 6
-custom_rag_model_id = "cohere.command-r-plus-08-2024"
+custom_rag_top_k = 10
+# custom_rag_model_id = "cohere.command-r-plus-08-2024"
+custom_rag_model_id = "meta.llama-3.3-70b-instruct"
 custom_rag_model_endpoint = "https://inference.generativeai.eu-frankfurt-1.oci.oraclecloud.com"
+
+[answer_directly]
+ad_model_id = "meta.llama-3.3-70b-instruct"
+ad_model_endpoint = "https://inference.generativeai.eu-frankfurt-1.oci.oraclecloud.com"
 
 [sql_agent]
 # user/pwd... in config_private.py
@@ -26,3 +35,9 @@ return_sql = true
 [embeddings]
 embed_model_id = "cohere.embed-multilingual-v3.0"
 embed_model_endpoint = "https://inference.generativeai.eu-frankfurt-1.oci.oraclecloud.com"
+
+[apm_tracing]
+enable_tracing = true
+apm_base_url = "https://aaaadec2jjn3maaaaaaaaach4e.apm-agt.eu-frankfurt-1.oci.oraclecloud.com/20200101"
+apm_content_type = "application/json"
+
