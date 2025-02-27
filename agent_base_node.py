@@ -1,5 +1,7 @@
 """
-Generic class for adding APM tracing
+Generic class for adding APM tracing.
+
+This class is a base class for all nodes in the agent
 """
 
 from abc import ABC, abstractmethod
@@ -16,7 +18,7 @@ from config_private import COMPARTMENT_OCID
 logger = get_console_logger()
 
 
-class BaseTracingNode(Runnable, ABC):
+class BaseAgentNode(Runnable, ABC):
     """
     This class is a base class for all nodes in the agent
     where you equip the node with APM tracing capabilities.
@@ -27,6 +29,9 @@ class BaseTracingNode(Runnable, ABC):
     def __init__(self, service_name=None, json_schema=None):
         """
         Init the node with service name and json schema
+
+        service_name (str): The name of the service, for tracing purposes.
+        json_schema (dict): The JSON schema for input and output data.
         """
         self.service_name = service_name or "default_service"
         self.json_schema = json_schema
