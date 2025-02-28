@@ -13,13 +13,8 @@ from utils import get_console_logger
 # json schema for the output of the Router
 # needs to be adapted to the actual output
 #
-# TODO: can be generalized passing the list of outcomes
-STEP_OPTIONS = [
-    "meetings_info",
-    "places_info",
-    "not_defined",
-    "set_meeting"
-]
+# generalized passing the list of outcomes
+STEP_OPTIONS = ["meetings_info", "places_info", "not_defined", "set_meeting"]
 
 json_route = {
     "title": "Route",
@@ -70,10 +65,11 @@ class Router:
         # self.logger.info("Called router...")
 
         # Run the augmented LLM with structured output to serve as routing logic
+        # (28/02/2025) added passing of JSON schema
         PROMPT_ROUTER = PROMPT_ROUTER_TEMPLATE.format(
             categories=", ".join(STEP_OPTIONS),
             # this is key: passing the json schema
-            json_schema=str(json_route)
+            json_schema=str(json_route),
         )
 
         decision = self.router.invoke(

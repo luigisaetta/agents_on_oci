@@ -5,11 +5,12 @@ Date last modified: 2024-04-27
 Python Version: 3.11
 """
 
+import json
+import re
 import logging
 import os
 import numpy as np
-import json
-import re
+
 
 def debug_bool(b_str):
     """
@@ -80,10 +81,11 @@ def compute_stats(list_docs):
 
     return mean_length, std_dev, perc_75_len
 
+
 def extract_dates_from_json_string(json_string):
     """
     Extracts start_date and end_date from a JSON string enclosed in triple backticks.
-    
+
     :param json_string: JSON string containing "start_date" and "end_date", enclosed in triple backticks.
     :return: Tuple (start_date, end_date) where missing values are None.
     """

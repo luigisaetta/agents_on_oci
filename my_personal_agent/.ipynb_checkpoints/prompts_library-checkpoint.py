@@ -16,6 +16,7 @@ Instructions:
 - step can be: {categories}
 - if the request is about getting meetings info, the classification must be: meetings_info
 - if the request is about getting information about restaurants the classification must be: places_info
+- if the request is about setting or scheduling a meeting then classification must be: set_meeting 
 - if the request is not clear or you don't have enough information to classify, the classification must be: not_defined
 - provide only the JSON result. Don't add other comments or questions.
 
