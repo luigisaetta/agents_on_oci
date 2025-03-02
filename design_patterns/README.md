@@ -6,26 +6,27 @@ In this folder we want to provide sample implementations for the various Agentic
 * **Orchestrator**
 * **Prompt Chain**
 
-For each pattern we provide an example and some suggestions for the implementation
-in a dedicated directory
+For each pattern we provide an example and suggestions for the implementation
+in a dedicated directory,
 
-## LangGraph
+## Agents based on LangGraph
 All the implementation discussed here are based on Langchain, LangGraph and Oracle OCI Generative AI Services.
-Most of the implementation are based on Llama 3.3 70B
+Most of the implementations are based on Llama 3.3 70B
 
 ## Base Node
 In **LangGraph** a node can be implemented using:
 * a Python function
 * A Python class implementing LangChain Runnable
 
-For several reasons I think that, especially when implementing complex workflow, it is better to use a Python class.
+For several reasons I think that, especially when implementing complex workflows, it is better to use a Python class.
 
 One of the reason is that using a Python class I can easily integrate the Agent with an Application Performance Monitoring Service (APM). 
 
-In the example I provide I have added the code to integrate with OCI APM.
+In the examples I provide I have added the code to integrate with OCI APM.
 
 Using the provided **BaseAgentNode** you need simply to subclass and implement the **_run_impl** method.
 
+## Integration with OCI AOPM and Observability
 More details on how to configure the integration with OCI APM are in a dedicated section.
 
 
