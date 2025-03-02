@@ -4,7 +4,6 @@ File Reader
 
 import re
 import pdfplumber
-
 import sys
 import os
 

@@ -1,5 +1,5 @@
 """
-Error identifier
+Clarity Analyzer
 """
 
 import sys
@@ -12,15 +12,16 @@ sys.path.append(parent_dir)
 from agent_base_node import BaseAgentNode
 
 
-class ErrorIdentifier(BaseAgentNode):
+class ClarityAnalyzer(BaseAgentNode):
     def _run_impl(self, state):
-        """LLM call to generate spelling errors list"""
-        # the number of max errors to identify
-        TOP_E = 10
+        """Second LLM call to analyze clarity"""
 
         llm = self.get_llm_model(max_tokens=2048)
 
-        request = f"Identify top {TOP_E} spelling errors in the following text: {state['file_text']}"
+        request = f"""Evaluate from the point of view of clarity the following text: {state['file_text']}.
+        Provide a score ranging from 1 to 10 (10 is best).
+        """
+
         msg = llm.invoke(request)
 
-        return {"output1": msg.content}
+        return {"output2": msg.content}

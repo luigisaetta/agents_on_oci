@@ -1,5 +1,5 @@
 """
-Error identifier
+Summarizer
 """
 
 import sys
@@ -12,15 +12,15 @@ sys.path.append(parent_dir)
 from agent_base_node import BaseAgentNode
 
 
-class ErrorIdentifier(BaseAgentNode):
+class Summarizer(BaseAgentNode):
     def _run_impl(self, state):
-        """LLM call to generate spelling errors list"""
-        # the number of max errors to identify
-        TOP_E = 10
+        """Fourth LLM call to summarize"""
 
         llm = self.get_llm_model(max_tokens=2048)
 
-        request = f"Identify top {TOP_E} spelling errors in the following text: {state['file_text']}"
+        request = f"""Summarize the following text in one page: {state['file_text']}.
+        """
+
         msg = llm.invoke(request)
 
-        return {"output1": msg.content}
+        return {"output4": msg.content}
