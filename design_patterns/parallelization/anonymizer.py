@@ -19,8 +19,14 @@ class Anonymizer(BaseAgentNode):
         # needs more tokens since works on the aggregation
         llm = self.get_llm_model(max_tokens=2048)
 
-        request = f"""Anonymize the following text replacing client/customer name, people names, emails.
+        request = f"""Anonymize the following text replacing 
+        * client/customer name
+        * people names
+        * emails
+        * company names
+        * languages names
         Don't anonymize: the document name.
+        Don't anonymize: the word Oracle,
         Text: {state['combined_output']}.
         """
 
