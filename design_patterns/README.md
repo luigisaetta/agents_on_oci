@@ -24,9 +24,9 @@ One of the reason is that using a Python class I can easily integrate the Agent 
 
 In the examples I provide I have added the code to integrate with OCI APM.
 
-Using the provided **BaseAgentNode** you need simply to subclass and implement the **_run_impl** method.
+Using the provided [BaseAgentNode](./agent_base_node.py) you need simply to subclass and implement the **_run_impl** method.
 
-## Integration with OCI AOPM and Observability
+## Integration with OCI APM and Observability
 More details on how to configure the integration with OCI APM are in a dedicated section.
 
 
