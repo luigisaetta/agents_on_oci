@@ -2,7 +2,7 @@
 In this folder we want to provide sample implementations for the various Agentic Design Patterns
 
 * **Router**
-* **Parallel Flow**
+* [Parallel Flow](./parallelization/)
 * **Orchestrator**
 * **Prompt Chain**
 
