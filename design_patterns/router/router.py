@@ -7,7 +7,7 @@ from structured_llm import StructuredLLM
 
 class Router(StructuredLLM):
     """
-    This class implement a rtouter using Llama 3.3, using the example StructuredLLM
+    This class implement a router using Llama 3.3, using the example StructuredLLM
     """
 
     def route(self, state: type) -> dict:
