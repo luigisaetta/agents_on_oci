@@ -54,7 +54,7 @@ class MeetingsInfo(BaseAgentNode):
 
         # Generate section
         # we're using another model
-        llm = self.get_llm_model(temperature=0.1, max_tokens=2048)
+        llm = self.get_llm_model(temperature=0, max_tokens=1024)
 
         messages = [
             SystemMessage(content=self.PROMPT_MEETINGS_INFO),
