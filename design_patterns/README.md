@@ -1,7 +1,7 @@
 # AI Agents Design Patterns
 In this folder we want to provide sample implementations for the various Agentic Design Patterns
 
-* **Router**
+* [Router](./router/)
 * [Parallel Flow](./parallelization/)
 * **Orchestrator**
 * **Prompt Chain**
