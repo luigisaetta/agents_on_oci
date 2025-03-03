@@ -28,4 +28,5 @@ class Aggregator(BaseAgentNode):
         logger.info("aggregator: Aggregating outputs...")
 
         # would need to work on state output
+
         return state

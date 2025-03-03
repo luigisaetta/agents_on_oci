@@ -208,3 +208,43 @@ def find_free_slots(appointments, start_date, end_date=None):
         current_date += timedelta(days=1)
 
     return free_slots
+
+
+def set_appointment(date, start_time, end_time, participants, notes=""):
+    """
+    Adds a new appointment if the time slot is free.
+
+    :param date: The date of the appointment (YYYY-MM-DD).
+    :param start_time: The start time (HH:MM).
+    :param end_time: The end time (HH:MM).
+    :param participants: List of participants.
+    :param notes: Additional notes (optional).
+    :return: Confirmation message.
+    """
+    # Convert times to integers for easier comparison
+    new_start = int(start_time.split(":")[0])
+    new_end = int(end_time.split(":")[0])
+
+    # Get existing appointments for the date
+    day_appointments = filter_appointments(appointments_dict["appointments"], date)
+
+    # Check for conflicts
+    for app in day_appointments:
+        existing_start = int(app["start_time"].split(":")[0])
+        existing_end = int(app["end_time"].split(":")[0])
+
+        if not (new_end <= existing_start or new_start >= existing_end):
+            return f"❌ Cannot book appointment on {date} from {start_time} to {end_time}. Slot is taken."
+
+    # Add the new appointment
+    appointments_dict["appointments"].append(
+        {
+            "date": date,
+            "start_time": start_time,
+            "end_time": end_time,
+            "participants": participants,
+            "notes": notes,
+        }
+    )
+
+    return f"✅ Appointment set on {date} from {start_time} to {end_time}."
