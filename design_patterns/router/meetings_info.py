@@ -1,5 +1,8 @@
 """
 Class to handle request for meeting info
+
+Updates:
+- 2025-03-04: Added structured LLM
 """
 
 import sys
@@ -9,11 +12,21 @@ import os
 parent_dir = os.path.abspath(os.path.join(os.getcwd(), ".."))
 sys.path.append(parent_dir)
 
-from langchain_core.messages import HumanMessage, SystemMessage
+from pydantic import BaseModel
+from typing import Optional
 
 from agent_base_node import BaseAgentNode
-from utils import extract_dates_from_json_string
+from structured_llm import StructuredLLM
 from meetings_api import appointments_dict, find_free_slots
+
+
+class MeetingsInfoState(BaseModel):
+    """
+    Defines the result of the parsing of LLM output.
+    """
+
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
 
 
 class MeetingsInfo(BaseAgentNode):
@@ -23,8 +36,9 @@ class MeetingsInfo(BaseAgentNode):
     It is derived from BaseTracingNode, therefore supports tracing to OCI APM
     """
 
-    PROMPT_MEETINGS_INFO = """
-    You are an intelligent assistant that extracts date information from user queries about free slots or meetings. 
+    # this is passed to the StructuredLLM as general info
+    GENERAL_INFO = """
+    Extracts date information from user queries about free slots in the agenda or meetings. 
     Given a user query, your task is to extract the **start date** and **end date** related to the request. 
     The dates should be formatted as `"YYYY-MM-DD"`. 
 
@@ -40,33 +54,21 @@ class MeetingsInfo(BaseAgentNode):
     - If the user mentions a **single date**, return `"end_date": null`.
     - If no date is found, return both values as `null`.
 
-    ### **Output Format (JSON):**
-    ```json
-    {
-        "start_date": "YYYY-MM-DD" or null,
-        "end_date": "YYYY-MM-DD" or null
-    }
-
     """
 
     def _run_impl(self, state):
         """Subclasses must implement this method."""
 
-        # Generate section
-        # we're using another model
-        llm = self.get_llm_model(temperature=0, max_tokens=1024)
+        llm = StructuredLLM(
+            model=MeetingsInfoState, general_instructions=self.GENERAL_INFO
+        )
 
-        messages = [
-            SystemMessage(content=self.PROMPT_MEETINGS_INFO),
-            HumanMessage(content=state.input),
-        ]
+        result = llm.invoke(state.input)
+        # result is of type MeetingsInfoState
 
-        result = llm.invoke(input=messages)
-
-        start_date, end_date = extract_dates_from_json_string(result.content)
-
+        # call the meetings api to find free slots
         free_slots = find_free_slots(
-            appointments_dict["appointments"], start_date, end_date
+            appointments_dict["appointments"], result.start_date, result.end_date
         )
 
         state.output = str(free_slots)

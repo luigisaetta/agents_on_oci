@@ -9,11 +9,24 @@ import os
 parent_dir = os.path.abspath(os.path.join(os.getcwd(), ".."))
 sys.path.append(parent_dir)
 
+from pydantic import BaseModel
+from typing import Optional
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from agent_base_node import BaseAgentNode
+from structured_llm import StructuredLLM
 from meetings_api import appointments_dict, set_appointment
 from utils import extract_meeting_details
+
+
+class SetMeetingsInfoState(BaseModel):
+    """
+    Defines the result of the parsing of LLM output.
+    """
+
+    date: Optional[str] = None
+    start_hour: Optional[str] = None
+    end_hour: Optional[str] = None
 
 
 class SetMeeting(BaseAgentNode):
@@ -23,8 +36,8 @@ class SetMeeting(BaseAgentNode):
     It is derived from BaseTracingNode, therefore supports tracing to OCI APM
     """
 
-    PROMPT_SET_MEETING = """
-    You are an intelligent assistant that extracts date information from user queries about setiing up a meeting. 
+    GENERAL_INFO = """
+    Extracts date information from user queries about setting up a meeting. 
     Given a user query, your task is to extract the **date** and **start hour** and **end hour** related to the request. 
     The dates should be formatted as `"YYYY-MM-DD"`.
     Hour should be formatted as `"HH:MM"`.
@@ -39,14 +52,6 @@ class SetMeeting(BaseAgentNode):
     - if no start hour is found, return `null`.
     - if no end hour is found, return `null`.
 
-    ### **Output Format (JSON):**
-    ```json
-    {
-        "date": "YYYY-MM-DD" or null,
-        "start_hour": "HH:MM" or null,
-        "end_hour": "HH:MM" or null
-    }
-
     """
 
     def _run_impl(self, state):
@@ -54,28 +59,23 @@ class SetMeeting(BaseAgentNode):
 
         # Generate section
         # we're using another model
-        llm = self.get_llm_model(temperature=0, max_tokens=1024)
+        llm = StructuredLLM(
+            model=SetMeetingsInfoState, general_instructions=self.GENERAL_INFO
+        )
 
-        messages = [
-            SystemMessage(content=self.PROMPT_SET_MEETING),
-            HumanMessage(content=state.input),
-        ]
+        result = llm.invoke(state.input)
+        # result is of type SetMeetingsInfoState
 
-        result = llm.invoke(input=messages)
+        print(result)
 
-        print(result.content)
+        set_appointment(
+            result.date,
+            result.start_hour,
+            result.end_hour,
+            participants="",
+            notes="Set by AI",
+        )
 
-        # parse it
-        parse_result = extract_meeting_details(result.content)
-        
-        print(parse_result)
-        
-        date = parse_result["date"]
-        start_hour = parse_result["start_hour"]
-        end_hour = parse_result["end_hour"]
-
-        set_appointment(date, start_hour, end_hour, participants="", notes="Set by AI")
-
-        state.output = f"meeting set on {date} from {start_hour} to {end_hour}"
+        state.output = f"meeting set on {result.date} from {result.start_hour} to {result.end_hour}"
 
         return state

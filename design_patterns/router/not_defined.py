@@ -34,7 +34,6 @@ class NotDefined(BaseAgentNode):
         """Subclasses must implement this method."""
 
         # Generate section
-        # we're using another model
         llm = self.get_llm_model(temperature=0.1, max_tokens=2048)
 
         messages = [

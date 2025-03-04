@@ -1,5 +1,8 @@
 """
 Prototype for structured output with Llama 3.3
+
+Updates:
+- added general instructions to the prompt
 """
 
 import sys
@@ -67,6 +70,7 @@ class StructuredLLM:
         model: type,
         llm_model_name: str = "meta.llama-3.3-70b-instruct",
         llm_endpoint: str = "https://inference.generativeai.eu-frankfurt-1.oci.oraclecloud.com",
+        general_instructions: str = "",
         few_shot_examples: Optional[List[dict]] = None,
     ):
         """
@@ -82,6 +86,7 @@ class StructuredLLM:
             - "output": Example expected structured response.
         """
         self.parser = PydanticOutputParser(pydantic_object=model)
+        self.general_instructions = general_instructions
         self.format_instructions = self.parser.get_format_instructions()
         # info regarding the LLM used
         self.llm_model_name = llm_model_name
@@ -101,6 +106,7 @@ class StructuredLLM:
         self.prompt = PromptTemplate(
             template=(
                 "You are a helpful AI assistant. "
+                "{general_instructions}\n"
                 "You must return a JSON object that strictly follows this schema:\n"
                 "{format_instructions}\n"
                 "{few_shot_examples}\n"
@@ -110,6 +116,7 @@ class StructuredLLM:
             input_variables=["input"],
             partial_variables={
                 "format_instructions": self.format_instructions,
+                "general_instructions": self.general_instructions,
                 "few_shot_examples": self.few_shot_examples,
             },
         )
@@ -127,6 +134,7 @@ class StructuredLLM:
             model_id=self.llm_model_name,
             compartment_id=COMPARTMENT_OCID,
             service_endpoint=self.llm_endpoint,
+            # for deterministic outut temp=0
             model_kwargs={"temperature": 0, "max_tokens": 1024},
         )
 
@@ -146,3 +154,9 @@ class StructuredLLM:
         - Parsed structured response based on the given Pydantic model.
         """
         return self.get_chain().invoke({"input": user_input})
+
+    def get_prompt(self):
+        """
+        Returns the prompt template.
+        """
+        return self.prompt
